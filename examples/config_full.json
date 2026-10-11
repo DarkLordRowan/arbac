@@ -1,0 +1,93 @@
+{
+  "run_id": "exp_full",
+  "output": "out",
+  "skip_existing": false,
+  "abort_on_error": false,
+
+  "precision": {
+    "backend": "mpmath",
+    "dps": [30, 50]
+  },
+
+  "series": [
+    {
+      "id": "zeta3",
+      "type": "zeta",
+      "params": { "s": 3 },
+      "exact_sum": "1.202056903159594285399738161511449990764986292"
+    },
+    {
+      "id": "geom07",
+      "type": "geometric",
+      "params": { "q": "0.7" },
+      "exact_sum": "3.3333333333333333333333333333333333333333333333333"
+    }
+  ],
+
+  "noise": [
+    {
+      "id": "clean",
+      "type": "none",
+      "params": {},
+      "seed": 0,
+      "applies_to": "all"
+    },
+    {
+      "id": "gauss_1e-6",
+      "type": "gaussian",
+      "params": { "sigma": "1e-6", "mode": "absolute" },
+      "seed": 42,
+      "applies_to": ["zeta3"]
+    }
+  ],
+
+  "accelerators": [
+    {
+      "id": "aitken",
+      "type": "aitken_delta2",
+      "params": {},
+      "n_max": 200,
+      "stopping": [
+        { "type": "max_iter", "params": { "n": 50 } }
+      ],
+      "stopping_mode": "any",
+      "applies_to": "all"
+    },
+    {
+      "id": "wynn",
+      "type": "wynn_epsilon",
+      "params": {},
+      "n_max": 200,
+      "stopping": [
+        { "type": "max_iter", "params": { "n": 20 } }
+      ],
+      "stopping_mode": "any",
+      "applies_to": { "series": "zeta3" }
+    }
+  ],
+
+  "postprocess": [
+    {
+      "id": "kz",
+      "type": "kolmogorov_zurbenko",
+      "params": { "window": 5, "passes": 2 },
+      "applies_to": "all"
+    }
+  ],
+
+  "envelopes": [
+    {
+      "id": "hilbert_obs",
+      "type": "hilbert",
+      "params": {
+        "window": 11,
+        "detrend_window": 11,
+        "threshold": 0.5,
+        "min_history": 20,
+        "run_mode": "after",
+        "used_as": "observer"
+      },
+      "applies_to": "all"
+    }
+  ]
+}

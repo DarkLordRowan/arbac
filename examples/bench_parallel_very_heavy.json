@@ -1,0 +1,23 @@
+{
+  "run_id": "bench_parallel_very_heavy",
+  "precision": {"backend": "mpmath", "dps": [1000, 2000]},
+  "series": [
+    {"type": "zeta", "params": {"s": 3}},
+    {"type": "zeta", "params": {"s": 5}},
+    {"type": "zeta", "params": {"s": 7}},
+    {"type": "zeta", "params": {"s": 10}}
+  ],
+  "noise": [],
+  "accelerators": [
+    {
+      "type": "aitken_delta2", "params": {},
+      "n_max": 3000,
+      "stopping": [{"type": "max_iter", "params": {"n": 2500}}]
+    },
+    {
+      "type": "wynn_epsilon", "params": {},
+      "n_max": 1500,
+      "stopping": [{"type": "max_iter", "params": {"n": 500}}]
+    }
+  ]
+}

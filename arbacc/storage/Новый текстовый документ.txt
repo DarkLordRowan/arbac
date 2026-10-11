@@ -1,0 +1,41 @@
+def save_iterations(
+    path_stem: Path,
+    rows: list[dict],
+    fmt: str | None = None,
+) -> Path:
+    """
+    Сохраняет iterations в выбранном формате.
+
+    Принимает:
+        path_stem — путь без расширения.
+        rows      — список словарей.
+        fmt       — "jsonl" / "jsonl.gz" / "parquet".
+                    None → из settings.STORAGE_FORMAT.
+
+    Возвращает:
+        путь к записанному файлу.
+    """
+    from arbacc.settings import (
+        STORAGE_FORMAT, STORAGE_PARQUET_COMPRESSION,
+    )
+    fmt = fmt or STORAGE_FORMAT
+
+    if fmt == "parquet":
+        from arbacc.storage.parquet import write_iterations_parquet
+        p = path_stem.with_suffix(".parquet")
+        write_iterations_parquet(
+            p, rows, compression=STORAGE_PARQUET_COMPRESSION,
+        )
+        return p
+
+    if fmt == "jsonl.gz":
+        from arbacc.storage.jsonl import write_jsonl
+        p = Path(str(path_stem) + ".jsonl.gz")
+        write_jsonl(p, rows, compress=True)
+        return p
+
+    # "jsonl" по умолчанию.
+    from arbacc.storage.jsonl import write_jsonl
+    p = path_stem.with_suffix(".jsonl")
+    write_jsonl(p, rows, compress=False)
+    return p

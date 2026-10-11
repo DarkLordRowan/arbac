@@ -1,0 +1,12 @@
+{
+  "accelerator": "aitken_delta2",
+  "params": {},
+  "estimate": "1.20205673632623328552010844763",
+  "n_used": 1000,
+  "n_max": 1000,
+  "stopped_by": "n_max(1000)",
+  "status": "ok",
+  "error": null,
+  "digits_gained": 6,
+  "meta": {}
+}

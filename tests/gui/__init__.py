@@ -1,0 +1,1 @@
+"""Тесты GUI (headless через offscreen)."""

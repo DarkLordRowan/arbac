@@ -1,0 +1,21 @@
+{
+  "run_id": "bench_mpmath",
+  "precision": {"backend": "mpmath", "dps": [50, 100]},
+  "series": [
+    {"type": "zeta", "params": {"s": 3}},
+    {"type": "zeta", "params": {"s": 5}},
+    {"type": "zeta", "params": {"s": 7}},
+    {"type": "zeta", "params": {"s": 10}}
+  ],
+  "noise": [
+    {"type": "gaussian",
+     "params": {"sigma": "1e-6", "mode": "absolute"},
+     "seed": 42}
+  ],
+  "accelerators": [
+    {"type": "aitken_delta2", "params": {}, "n_max": 500,
+     "stopping": [{"type": "max_iter", "params": {"n": 300}}]},
+    {"type": "wynn_epsilon", "params": {}, "n_max": 300,
+     "stopping": [{"type": "max_iter", "params": {"n": 100}}]}
+  ]
+}

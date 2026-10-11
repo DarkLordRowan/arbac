@@ -1,0 +1,99 @@
+{
+  "run_id": "exp_001",
+  "output": "out",
+  "precision": {
+    "backend": [
+      "arb",
+      "mpmath"
+    ],
+    "dps": 30
+  },
+  "series": [
+    {
+      "type": "cos",
+      "params": {
+        "n_raw": 100,
+        "x": 0.6
+      }
+    },
+    {
+      "type": "zeta",
+      "params": {
+        "n_raw": 100,
+        "s": 3
+      }
+    }
+  ],
+  "noise": [
+    {
+      "type": "ar1",
+      "params": {
+        "phi": 0.7,
+        "sigma": 1e-06
+      }
+    },
+    {
+      "type": "gaussian",
+      "params": {
+        "mode": "absolute",
+        "sigma": 1e-06
+      }
+    }
+  ],
+  "accelerators": [
+    {
+      "type": "aitken_delta2",
+      "params": {}
+    },
+    {
+      "type": "wynn_epsilon",
+      "params": {}
+    }
+  ],
+  "postprocess": [
+    {
+      "type": "savitzky_golay",
+      "params": {
+        "order": 2,
+        "window": 7
+      }
+    },
+    {
+      "type": "kolmogorov_zurbenko",
+      "params": {
+        "passes": 2,
+        "window": 5
+      }
+    },
+    {
+      "type": "median",
+      "params": {
+        "window": 5
+      }
+    }
+  ],
+  "envelopes": [
+    {
+      "type": "emd",
+      "params": {
+        "detrend_window": 11,
+        "min_history": 20,
+        "run_mode": "after",
+        "threshold": 0.5,
+        "used_as": "observer",
+        "window": 15
+      }
+    },
+    {
+      "type": "hilbert",
+      "params": {
+        "detrend_window": 11,
+        "min_history": 20,
+        "run_mode": "after",
+        "threshold": 0.5,
+        "used_as": "observer",
+        "window": 11
+      }
+    }
+  ]
+}

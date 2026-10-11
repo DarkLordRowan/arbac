@@ -1,0 +1,10 @@
+{
+  "total": 1,
+  "done": 1,
+  "failed": 0,
+  "skipped": 0,
+  "started_at": "2026-09-22T06:25:17.408923+00:00",
+  "last_task": "zeta_s3__none__aitken_delta2_dps30",
+  "last_status": "ok",
+  "updated_at": "2026-09-22T06:25:18.390201+00:00"
+}

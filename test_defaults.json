@@ -1,0 +1,6 @@
+{
+  "precision": {"backend": "mpmath", "dps": 30},
+  "series": [{"id": "z", "type": "zeta", "params": {"s": 3}}],
+  "noise": [{"id": "n", "type": "none", "params": {}, "seed": 0}],
+  "accelerators": [{"id": "a", "type": "aitken_delta2", "params": {}}]
+}

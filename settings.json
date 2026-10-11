@@ -1,0 +1,12 @@
+{
+    "PREVIEW_MAX_TASKS": 50,
+    "PREVIEW_MAX_N": 1000,
+    "PREVIEW_MAX_DPS": 1000,
+    "PREVIEW_BACKEND": "arb",
+    "PARALLEL_ENABLED": true,
+    "PARALLEL_WORKERS": 0,
+    "STORAGE_SAVE_STREAMS": false,
+    "STORAGE_COMPRESS_JSONL": true,
+    "STORAGE_FORMAT": "parquet",
+    "STORAGE_PARQUET_COMPRESSION": "zstd"
+}

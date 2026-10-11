@@ -1,0 +1,27 @@
+{
+  "run_id": "exp_001",
+  "output": "out",
+  "precision": {
+    "backend": "mpmath",
+    "dps": 30
+  },
+  "series": [
+    {
+      "type": "zeta",
+      "params": {
+        "n_raw": 100,
+        "s": 3
+      }
+    }
+  ],
+  "noise": [],
+  "accelerators": [
+    {
+      "type": "aitken_delta2",
+      "params": {},
+      "n_max": 100
+    }
+  ],
+  "postprocess": [],
+  "envelopes": []
+}

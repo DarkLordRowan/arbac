@@ -1,0 +1,24 @@
+{
+  "run_id": "exp_minimal",
+  "output": "out",
+
+  "precision": { "backend": "mpmath", "dps": 30 },
+
+  "series": [
+    { "id": "zeta3", "type": "zeta", "params": { "s": 3 } }
+  ],
+
+  "noise": [
+    { "id": "clean", "type": "none", "params": {}, "seed": 0 }
+  ],
+
+  "accelerators": [
+    {
+      "id": "aitken",
+      "type": "aitken_delta2",
+      "params": {},
+      "n_max": 100,
+      "stopping": [{ "type": "max_iter", "params": { "n": 20 } }]
+    }
+  ]
+}
