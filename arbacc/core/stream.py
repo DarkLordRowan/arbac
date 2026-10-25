@@ -58,3 +58,36 @@ class Stream(Protocol):
     def __len__(self) -> int:
         """Возвращает количество уже материализованных элементов."""
         ...
+
+def is_sequence(source) -> bool:
+    """Optional stream tag; untagged existing streams still contain series terms."""
+    return getattr(source,'kind','terms')=='sequence'
+
+
+def partial_value(source,n,previous,ctx):
+    """Return s_n from either raw sequence samples or series terms.
+
+    Do not difference and re-sum a sequence: cancellation would erase the
+    precision-sensitive effects studied by Rump (ETNA 52, 2020).
+    """
+    value=source.get(n)
+    if is_sequence(source) or previous is None:
+        return value
+    return ctx.backend.add(previous,value,ctx.dps)
+
+
+def series_term(source,n,ctx):
+    """a_n=s_n-s_(n-1) for a sequence; s_(-1)=0 by convention."""
+    if n<0: raise IndexError('negative term index')
+    value=source.get(n)
+    if not is_sequence(source) or n==0:
+        return value
+    return ctx.backend.sub(value,source.get(n-1),ctx.dps)
+
+
+def extend_partials(source,values,ctx,count):
+    """Extend a partial-sum/sequence cache without changing its interpretation."""
+    while len(values)<count:
+        n=len(values)
+        values.append(partial_value(source,n,values[-1] if values else None,ctx))
+    return values

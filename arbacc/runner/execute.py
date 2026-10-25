@@ -104,6 +104,8 @@ def execute_accel(task: dict[str, Any], output_root: Path) -> dict[str, Any]:
             ctx=ctx,
             n_max=n_max,
         )
+        result.meta['source_kind']=getattr(source,'kind','terms')
+        result.meta['reference_kind']=getattr(series,'reference_kind','ordinary_sum')
         result.exact_sum = series.exact_sum(ctx)
         if result.exact_sum is not None and result.estimate is not None:
             result.digits_gained = digits_gained(
@@ -291,6 +293,8 @@ def _load_accelerated_result(
         n_max=result_obj.get("n_max"),
         stopped_by=result_obj.get("stopped_by", ""),
         status=result_obj.get("status", "ok"),
-        exact_sum=None,
+        exact_sum=(ctx.backend.from_str(result_obj['exact_sum'],ctx.dps)
+                   if result_obj.get('exact_sum') is not None else None),
         digits_gained=result_obj.get("digits_gained"),
+        meta=result_obj.get("meta", {}),
     )

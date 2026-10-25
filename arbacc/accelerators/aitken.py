@@ -19,7 +19,7 @@ from typing import Any
 from arbacc.core.accelerator import AcceleratorBase, AlgoState
 from arbacc.core.context import Context
 from arbacc.core.registry import register
-from arbacc.core.stream import Stream
+from arbacc.core.stream import Stream, extend_partials
 
 
 @register("accelerators", "aitken_delta2")
@@ -65,22 +65,7 @@ class AitkenDelta2(AcceleratorBase):
         k = state.iteration
 
         # Восстанавливаем накопленные частичные суммы.
-        partials: list[Any] = state.extra.get("partials", [])
-
-        # Дотягиваем partials до s_k.
-        while len(partials) <= k:
-            idx = len(partials)
-            a = source.get(idx)
-            if idx == 0:
-                partials.append(a)
-            else:
-                partials.append(b.add(partials[idx - 1], a, ctx.dps))
-
-        # Дотягиваем до s_{k+2}.
-        while len(partials) <= k + 2:
-            idx = len(partials)
-            a = source.get(idx)
-            partials.append(b.add(partials[idx - 1], a, ctx.dps))
+        partials=extend_partials(source,state.extra.get("partials",[]),ctx,k+3)
 
         s_k = partials[k]
         s_k1 = partials[k + 1]

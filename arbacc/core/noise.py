@@ -103,6 +103,7 @@ class _NoisyStream:
     """
 
     def __init__(self, source: Stream, noise: NoiseBase, ctx: Context):
+        self.kind = getattr(source, "kind", "terms")
         self._source = source
         self._noise = noise
         self._ctx = ctx

@@ -118,6 +118,7 @@ def save_accelerated_result(
         "status": result.status,
         "error": result.error,
         "digits_gained": result.digits_gained,
+        "exact_sum": (ctx.backend.to_str(result.exact_sum,ctx.dps) if result.exact_sum is not None else None),
         "meta": {k: str(v) for k, v in result.meta.items()},
     }
     _write_json(dir_path / "result.json", result_obj)

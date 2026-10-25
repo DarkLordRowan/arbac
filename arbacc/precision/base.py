@@ -125,8 +125,56 @@ class PrecisionBackend(ABC):
         """Γ(x)."""
         ...
 
-    #: Поддерживаемые семантические режимы округления.
-    #: Backend переопределяет своим маппингом (см. ниже).
+    def pi(self, dps):
+        raise NotImplementedError("pi is unavailable for this backend")
+
+    def euler_constant(self, dps):
+        raise NotImplementedError("euler_constant is unavailable for this backend")
+
+    def erf(self, x, dps):
+        raise NotImplementedError("erf is unavailable for this backend")
+
+    def si(self, x, dps):
+        raise NotImplementedError("si is unavailable for this backend")
+
+    def ci(self, x, dps):
+        raise NotImplementedError("ci is unavailable for this backend")
+
+    def bessel_j(self, alpha, x, dps):
+        raise NotImplementedError("bessel_j is unavailable for this backend")
+
+    def gamma_lower(self, alpha, x, dps):
+        raise NotImplementedError("gamma_lower is unavailable for this backend")
+
+    def lambertw(self, x, dps):
+        raise NotImplementedError("lambertw is unavailable for this backend")
+
+    def ellipk(self, m, dps):
+        raise NotImplementedError("ellipk is unavailable for this backend")
+
+    def ellipe(self, m, dps):
+        raise NotImplementedError("ellipe is unavailable for this backend")
+
+    def legendre(self, n, x, dps):
+        raise NotImplementedError("legendre is unavailable for this backend")
+
+    def with_error(self,value,error,dps):
+        """Attach an absolute error bound when supported by the backend."""
+        return value
+
+    def is_finite(self, x: Any, dps: int) -> bool:
+        """Whether x is finite in the selected backend."""
+        raise NotImplementedError(f"{self.name}: is_finite is unavailable")
+
+    def atan(self, x: Any, dps: int) -> Any:
+        """Real arctangent; https://dlmf.nist.gov/4.23."""
+        raise NotImplementedError(f"{self.name}: atan is unavailable")
+
+    def asin(self, x: Any, dps: int) -> Any:
+        """Real arcsine; https://dlmf.nist.gov/4.23."""
+        raise NotImplementedError(f"{self.name}: asin is unavailable")
+
+    # Supported semantic rounding modes; backends may override.
     SUPPORTED_ROUNDING: tuple[str, ...] = (
         "nearest", "floor", "ceiling",
         "toward_zero", "away_from_zero",

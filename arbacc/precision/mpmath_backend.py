@@ -126,6 +126,67 @@ class MpmathBackend(PrecisionBackend):
         with mp.workdps(dps):
             return abs(a - b)
 
+    def pi(self, dps):
+        with mp.workdps(dps):
+            return +mp.pi
+
+    def euler_constant(self, dps):
+        with mp.workdps(dps):
+            return +mp.euler
+
+    def erf(self, x, dps):
+        with mp.workdps(dps):
+            return +mp.erf(x)
+
+    def si(self, x, dps):
+        with mp.workdps(dps):
+            return +mp.si(x)
+
+    def ci(self, x, dps):
+        with mp.workdps(dps):
+            return +mp.ci(x)
+
+    def bessel_j(self, alpha, x, dps):
+        with mp.workdps(dps):
+            return +mp.besselj(alpha,x)
+
+    def gamma_lower(self, alpha, x, dps):
+        with mp.workdps(dps):
+            return +mp.gammainc(alpha,0,x)
+
+    def lambertw(self, x, dps):
+        with mp.workdps(dps):
+            return +mp.lambertw(x)
+
+    def ellipk(self, m, dps):
+        with mp.workdps(dps):
+            return +mp.ellipk(m)
+
+    def ellipe(self, m, dps):
+        with mp.workdps(dps):
+            return +mp.ellipe(m)
+
+    def legendre(self, n, x, dps):
+        with mp.workdps(dps):
+            return +mp.legendre(n,x)
+
+    def with_error(self,value,error,dps):
+        """Attach an absolute error bound when supported by the backend."""
+        with mp.workdps(dps):
+            return +mp.mpf(value)
+
+    def is_finite(self, x, dps):
+        with mp.workdps(dps):
+            return bool(mp.isfinite(x))
+
+    def atan(self, x, dps):
+        with mp.workdps(dps):
+            return +mp.atan(x)
+
+    def asin(self, x, dps):
+        with mp.workdps(dps):
+            return +mp.asin(x)
+
     def sign(self, a: Any, dps: int) -> int:
         with mp.workdps(dps):
             if a > 0:

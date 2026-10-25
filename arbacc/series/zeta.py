@@ -68,4 +68,10 @@ class ZetaSeries(SeriesBase):
             число backend'а.
         """
         s = ctx.number(self.params["s"])
+        # Analytic continuation is not the sum of this Dirichlet series.
+        # https://dlmf.nist.gov/25.2#E1 requires Re(s)>1.
+        if not ctx.backend.is_finite(s, ctx.dps) or ctx.backend.sign(
+            ctx.backend.sub(s, ctx.number(1), ctx.dps), ctx.dps
+        ) <= 0:
+            raise ValueError("Zeta Dirichlet series sum requires s > 1")
         return ctx.backend.zeta(s, ctx.dps)

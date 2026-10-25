@@ -1,141 +1,52 @@
+"""Wynn epsilon table; https://dlmf.nist.gov/3.9#iv (3.9.11).
+
+Iteration k uses 2k+1 partial sums. Singular cells are unavailable;
+the highest available even column is used, without claiming convergence.
 """
-ε-алгоритм Винна — мощный акселератор сходимости.
-
-Зачем:
-    Универсальный нелинейный акселератор. Строит таблицу ε:
-        ε_{-1}^{(n)} = 0
-        ε_0^{(n)}    = s_n
-        ε_{k+1}^{(n)} = ε_{k-1}^{(n+1)} + 1 / (ε_k^{(n+1)} - ε_k^{(n)})
-
-    Чётные столбцы ε_{2k}^{(n)} — ускоренные оценки.
-
-Реализация — ИНКРЕМЕНТАЛЬНАЯ.
-
-    Наивный вариант строит всю таблицу на каждой итерации: O(N⁴)
-    суммарно. Инкрементальный обновляет только одну диагональ:
-    O(N²) суммарно. Для N=1000 это разница в 10⁶ операций.
-
-    Хранение — ромбовидная схема. eps[j][n] — ячейка столбца j,
-    диагонали n. На итерации k добавляется одна новая ячейка в
-    каждый столбец j ≤ k.
-
-Как расширять:
-    Скопируй как шаблон для нового акселератора с таблицей.
-"""
-
-from __future__ import annotations
-from typing import Any
-
 from arbacc.core.accelerator import AcceleratorBase, AlgoState
-from arbacc.core.context import Context
 from arbacc.core.registry import register
-from arbacc.core.stream import Stream
+from arbacc.core.stream import partial_value
 
 
 @register("accelerators", "wynn_epsilon")
 class WynnEpsilon(AcceleratorBase):
-    """ε-алгоритм Винна (инкрементальный)."""
-
     name = "wynn_epsilon"
     display_name = "wynn"
-
     PARAM_SPEC = {}
 
     def required_input(self, state: AlgoState) -> int:
-        """
-        На итерации k нужно 2k+1 членов (s_0..s_{2k}).
-
-        Принимает:
-            state — состояние.
-
-        Возвращает:
-            2k + 1.
-        """
         return 2 * state.iteration + 1
 
-    def step(
-        self,
-        source: Stream,
-        state: AlgoState,
-        ctx: Context,
-    ) -> AlgoState:
-        """
-        Одна итерация ε-алгоритма (инкрементально).
-
-        При diff == 0 ячейка помечается None. При выборе оценки
-        пропускаем столбцы с None — берём последний чётный столбец
-        с доступной ячейкой. Это защищает от «схлопывания» arb
-        при высокой точности.
-        """
-        b = ctx.backend
-        k = state.iteration
-
-        partials: list[Any] = state.extra.get("partials", [])
-        eps: list[list[Any]] = state.extra.get("eps", [])
-        zero = ctx.number(0)
-        one = ctx.number(1)
-
-        # 1. Дотягиваем partials до s_k.
-        while len(partials) <= k:
-            idx = len(partials)
-            a = source.get(idx)
-            if idx == 0:
-                partials.append(a)
-            else:
-                partials.append(b.add(partials[idx - 1], a, ctx.dps))
-
-        s_k = partials[k]
-
-        # 2. Убедимся, что eps[0] есть.
-        while len(eps) <= k:
-            eps.append([])
-        if len(eps[0]) == 0:
-            eps[0] = [partials[0]]
-        while len(eps[0]) <= k:
-            eps[0].append(partials[len(eps[0])])
-
-        # 3. Строим столбцы 1..k.
-        for j in range(1, k + 1):
-            n = k - j
-            while len(eps[j]) <= n:
-                eps[j].append(None)
-
-            if j == 1:
-                prev_prev = zero
-            else:
-                prev_prev = eps[j - 2][n + 1]
-
-            a_val = eps[j - 1][n + 1]
-            b_val = eps[j - 1][n]
-
-            # Если у предыдущих ячеек нет данных — ячейка недоступна.
-            if a_val is None or b_val is None:
-                eps[j][n] = None
-                continue
-
-            diff = b.sub(a_val, b_val, ctx.dps)
-
-            if b.sign(diff, ctx.dps) == 0:
-                # Разность не определена — ячейка недоступна.
-                # Не пишем 0 (это ложные данные).
-                eps[j][n] = None
-            else:
-                inv = b.div(one, diff, ctx.dps)
-                eps[j][n] = b.add(prev_prev, inv, ctx.dps)
-
-        # 4. Оценка — последний доступный чётный столбец.
-        estimate = None
-        for j in range(min(k, len(eps) - 1), -1, -1):
-            if j % 2 != 0:
-                continue
-            if len(eps[j]) > 0 and eps[j][0] is not None:
+    def step(self, source, state, ctx):
+        b, dps = ctx.backend, ctx.dps
+        partials = state.extra.get("partials", [])
+        eps = state.extra.get("eps", [])
+        zero, one = ctx.number(0), ctx.number(1)
+        target = self.required_input(state)
+        # Append each new diagonal once: O(N^2) arithmetic overall.
+        while len(partials) < target:
+            end = len(partials)
+            partials.append(partial_value(source,end,partials[-1] if partials else None,ctx))
+            if not eps:
+                eps.append([])
+            eps[0].append(partials[-1])
+            for j in range(1, end + 1):
+                if len(eps) <= j:
+                    eps.append([])
+                n = end - j
+                previous = zero if j == 1 else eps[j - 2][n + 1]
+                left, right = eps[j - 1][n], eps[j - 1][n + 1]
+                value = None
+                if previous is not None and left is not None and right is not None:
+                    diff = b.sub(right, left, dps)
+                    if b.sign(diff, dps) != 0:
+                        value = b.add(previous, b.div(one, diff, dps), dps)
+                eps[j].append(value)
+        estimate = partials[-1]
+        for j in range(target - 1, 1, -2):
+            if eps[j][0] is not None:
                 estimate = eps[j][0]
                 break
-
-        if estimate is None:
-            estimate = s_k
-
         new_state = state.with_estimate(estimate)
-        new_state.extra["partials"] = partials
-        new_state.extra["eps"] = eps
+        new_state.extra.update(partials=partials, eps=eps)
         return new_state

@@ -5,7 +5,7 @@
 from arbacc.core.context import Context
 from arbacc.core.stream import Stream
 from arbacc.core.plugin import PluginBase
-from arbacc.core.series import SeriesBase
+from arbacc.core.series import SeriesBase, SequenceBase
 from arbacc.core.noise import NoiseBase
 from arbacc.core.accelerator import AcceleratorBase, AlgoState
 from arbacc.core.stopping import StoppingBase
@@ -19,6 +19,7 @@ __all__ = [
     "Stream",
     "PluginBase",
     "SeriesBase",
+    "SequenceBase",
     "NoiseBase",
     "AcceleratorBase",
     "AlgoState",

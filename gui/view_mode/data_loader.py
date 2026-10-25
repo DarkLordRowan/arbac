@@ -590,6 +590,7 @@ def raw_partial_sums(task: dict, max_n: int = 500) -> tuple[list[int], list[str]
     точность 15-16 знаками и ломало residual на больших dps.
     """
     from arbacc.core.context import Context
+    from arbacc.core.stream import partial_value
     from arbacc.core.registry import get as _get
     from arbacc.precision import get_backend
 
@@ -627,10 +628,10 @@ def raw_partial_sums(task: dict, max_n: int = 500) -> tuple[list[int], list[str]
         )
         for n in range(n_max):
             try:
-                a = stream.get(n)
+                value = partial_value(stream,n,total if n else None,ctx)
             except (IndexError, StopIteration):
                 break
-            total = backend.add(total, a, ctx.dps)
+            total = value
             xs.append(n + 1)
             ys_str.append(backend.to_str(total, ctx.dps))
         return xs, ys_str

@@ -4,3 +4,6 @@ pyqtgraph>=0.13.3
 polars>=0.20.0
 numpy>=1.24.0
 pytest>=8.0.0
+
+# Required by Parquet storage and the core test suite.
+pyarrow>=14.0.0

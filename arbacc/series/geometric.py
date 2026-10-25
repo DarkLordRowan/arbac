@@ -61,4 +61,10 @@ class GeometricSeries(SeriesBase):
         b = ctx.backend
         q = ctx.number(self.params["q"])
         one = ctx.number(1)
+        # Geometric sum exists only for |q|<1; /4.6 (binomial series).
+        # https://dlmf.nist.gov/4.6
+        if not b.is_finite(q, ctx.dps) or b.sign(
+            b.sub(one, b.abs_val(q, ctx.dps), ctx.dps), ctx.dps
+        ) <= 0:
+            raise ValueError("Geometric series sum requires |q| < 1")
         return b.div(one, b.sub(one, q, ctx.dps), ctx.dps)

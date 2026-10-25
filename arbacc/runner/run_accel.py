@@ -61,10 +61,10 @@ def run_accelerator(
             break
 
         # Дотягиваем источник.
-        source.extend_to(need - 1)
 
         # Один шаг акселератора.
         try:
+            source.extend_to(need - 1)
             state = accelerator.step(source, state, ctx)
         except Exception as e:
             status = "failed"

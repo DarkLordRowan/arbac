@@ -88,6 +88,10 @@ class ArbBackend(PrecisionBackend):
         """
         if isinstance(value, arb):
             return value
+        if isinstance(value, int):
+            # Native integer conversion avoids Python's decimal string digit limit
+            # and preserves exact large binomial/factorial coefficients.
+            return arb(value)
 
         # mpmath.mpf — специальная обработка.
         try:
@@ -235,6 +239,67 @@ class ArbBackend(PrecisionBackend):
     def abs_diff(self, a: Any, b: Any, dps: int) -> Any:
         flint_ctx.prec = self._bits(dps)
         return abs(self._to_arb(a, dps) - self._to_arb(b, dps))
+
+    def pi(self, dps):
+        flint_ctx.prec = self._bits(dps)
+        return arb.pi()
+
+    def euler_constant(self, dps):
+        flint_ctx.prec = self._bits(dps)
+        return arb.const_euler()
+
+    def erf(self, x, dps):
+        flint_ctx.prec = self._bits(dps)
+        return self._to_arb(x, dps).erf()
+
+    def si(self, x, dps):
+        flint_ctx.prec = self._bits(dps)
+        return self._to_arb(x, dps).si()
+
+    def ci(self, x, dps):
+        flint_ctx.prec = self._bits(dps)
+        return self._to_arb(x, dps).ci()
+
+    def bessel_j(self, alpha, x, dps):
+        flint_ctx.prec = self._bits(dps)
+        return self._to_arb(x,dps).bessel_j(self._to_arb(alpha,dps))
+
+    def gamma_lower(self, alpha, x, dps):
+        flint_ctx.prec = self._bits(dps)
+        return self._to_arb(x,dps).gamma_lower(self._to_arb(alpha,dps))
+
+    def lambertw(self, x, dps):
+        flint_ctx.prec = self._bits(dps)
+        return self._to_arb(x,dps).lambertw()
+
+    def ellipk(self, m, dps):
+        flint_ctx.prec = self._bits(dps)
+        return arb.pi()/2*self._to_arb(m,dps).hypgeom_2f1(arb(1)/2,arb(1)/2,1)
+
+    def ellipe(self, m, dps):
+        flint_ctx.prec = self._bits(dps)
+        return arb.pi()/2*self._to_arb(m,dps).hypgeom_2f1(-arb(1)/2,arb(1)/2,1)
+
+    def legendre(self, n, x, dps):
+        flint_ctx.prec = self._bits(dps)
+        return self._to_arb(x,dps).legendre_p(n)
+
+    def with_error(self,value,error,dps):
+        """Attach an absolute error bound when supported by the backend."""
+        flint_ctx.prec = self._bits(dps)
+        return self._to_arb(value,dps) + arb(0,self._to_arb(error,dps))
+
+    def is_finite(self, x, dps):
+        flint_ctx.prec = self._bits(dps)
+        return bool(self._to_arb(x, dps).is_finite())
+
+    def atan(self, x, dps):
+        flint_ctx.prec = self._bits(dps)
+        return self._to_arb(x, dps).atan()
+
+    def asin(self, x, dps):
+        flint_ctx.prec = self._bits(dps)
+        return self._to_arb(x, dps).asin()
 
     def sign(self, a: Any, dps: int) -> int:
         flint_ctx.prec = self._bits(dps)

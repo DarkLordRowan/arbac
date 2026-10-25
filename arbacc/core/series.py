@@ -108,3 +108,47 @@ class _SeriesStream:
 
     def __len__(self) -> int:
         return len(self._cache)
+
+class SequenceBase(SeriesBase):
+    """A source of sequence values, NOT additive terms of an infinite series.
+
+    The registry category is kept for config compatibility. Streams carry
+    kind='sequence', preserved by noise wrappers and consumed by accelerators.
+    State belongs to a stream, so two contexts never share numerical caches.
+    """
+    reference_kind='sequence_limit'
+
+    def generate(self,n,ctx):
+        return self.build_stream(ctx).get(n)
+
+    @abstractmethod
+    def sequence_step(self,n,values,state,ctx):
+        """Compute the next value using this stream's private values and state."""
+        ...
+
+    def build_stream(self,ctx):
+        return _SequenceStream(self,ctx)
+
+
+class _SequenceStream:
+    kind='sequence'
+
+    def __init__(self,sequence,ctx):
+        self._sequence,self._ctx=sequence,ctx
+        self._cache=[]
+        self._state={}
+
+    def get(self,n):
+        if n<0: raise IndexError('negative sequence index')
+        self.extend_to(n)
+        return self._cache[n]
+
+    def extend_to(self,n):
+        if n<0: raise IndexError('negative sequence index')
+        while len(self._cache)<=n:
+            index=len(self._cache)
+            value=self._sequence.sequence_step(index,self._cache,self._state,self._ctx)
+            self._cache.append(value)
+
+    def __len__(self):
+        return len(self._cache)
