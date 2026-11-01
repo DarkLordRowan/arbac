@@ -37,6 +37,7 @@ class LeftPanel(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._suppress = False
+        self._config_base = {}
 
         outer = QVBoxLayout(self)
         outer.setContentsMargins(0, 0, 0, 0)
@@ -76,11 +77,12 @@ class LeftPanel(QWidget):
         if not self._suppress:
             self.changed.emit()
 
-    def to_config(self, run_id: str = "exp_001", output: str = "out") -> dict:
+    def to_config(self, run_id: str | None = None, output: str | None = None) -> dict:
         """Собирает конфиг из формы."""
         return {
-            "run_id": run_id,
-            "output": output,
+            **self._config_base,
+            "run_id": run_id if run_id is not None else self._config_base.get("run_id", "exp_001"),
+            "output": output if output is not None else self._config_base.get("output", "out"),
             "precision": self.precision.to_dict(),
             "series": self.series.to_list(),
             "noise": self.noise.to_list(),
@@ -91,6 +93,7 @@ class LeftPanel(QWidget):
 
     def from_config(self, config: dict) -> None:
         """Загружает конфиг в форму."""
+        self._config_base = {key: value for key, value in config.items() if key not in ("precision", "series", "noise", "accelerators", "postprocess", "envelopes")}
         self._suppress = True
         try:
             if "precision" in config:
@@ -111,6 +114,7 @@ class LeftPanel(QWidget):
 
     def clear(self) -> None:
         """Очищает всё."""
+        self._config_base = {}
         self.precision.from_dict({"backend": "mpmath", "dps": 30})
         for s in self.sections:
             s.from_list([])

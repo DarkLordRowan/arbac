@@ -510,8 +510,8 @@ class Workspace:
             self._status.setText("Run запущен…")
 
             output_root = None
-            if self.state.last_output_root:
-                output_root = str(self.state.last_output_root)
+            # Run uses the output path in the current saved configuration.
+            # last_output_root belongs to the previous run / analysis selection.
 
             self._log.info(
                 "Starting Run: config=%s, output=%s",

@@ -83,6 +83,10 @@ def test_run_creates_output_and_sets_state(
 
     # state.last_output_root заполнен и указывает на реальную директорию.
     assert workspace.state.last_output_root is not None
+    assert workspace.state.last_output_root == Path(minimal_config_file[1]["output"]) / "gui_test"
+    saved = json.loads(minimal_config_file[0].read_text())
+    assert saved["run_id"] == "gui_test"
+    assert saved["output"] == minimal_config_file[1]["output"]
     assert workspace.state.last_output_root.exists(), (
         f"output не создан: {workspace.state.last_output_root}"
     )

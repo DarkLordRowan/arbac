@@ -92,3 +92,18 @@ def test_analysis_toggle(workspace):
     assert workspace.state.mode == "analysis"
     workspace._btn_analysis.click()
     assert workspace.state.mode == "edit"
+
+
+def test_form_preserves_output_identity_and_extra_options(workspace, tmp_path):
+    config = workspace._left_edit.to_config()
+    config.update(run_id="custom_run", output=str(tmp_path), workers=3)
+    workspace._left_edit.from_config(config)
+    actual = workspace._left_edit.to_config()
+    assert actual["run_id"] == "custom_run"
+    assert actual["output"] == str(tmp_path)
+    assert actual["workers"] == 3
+    assert workspace._left_edit.to_config(run_id="override")["run_id"] == "override"
+    workspace._left_edit.clear()
+    reset = workspace._left_edit.to_config()
+    assert reset["run_id"] == "exp_001"
+    assert "workers" not in reset

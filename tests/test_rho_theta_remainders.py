@@ -193,3 +193,97 @@ def test_rho_grid_rejects_invalid_shift(shift, ext_ctx):
     algo = get("accelerators", "wynn_rho")({"grid_shift": shift})
     with pytest.raises(ValueError, match="grid_shift"):
         algo.step(Terms([mp.mpf(n) for n in range(8)], ext_ctx), AlgoState(), ext_ctx)
+
+
+@lru_cache(None)
+def parameterized_rho_exact(values, column, index, mode, gamma, rho):
+    if column == -1:
+        return Fraction(0)
+    if column == 0:
+        return values[index]
+    numerator = column-1-gamma if mode == "generalized" else -gamma+Fraction(column, 2)/rho+column%2
+    return parameterized_rho_exact(values, column-2, index+1, mode, gamma, rho)+numerator/(
+        parameterized_rho_exact(values, column-1, index+1, mode, gamma, rho)-
+        parameterized_rho_exact(values, column-1, index, mode, gamma, rho))
+
+
+@pytest.mark.parametrize("mode", ["generalized", "gamma_rho"])
+@pytest.mark.parametrize("gamma", ["-0.5", "-1", "-2.5"])
+@pytest.mark.parametrize("rho", ["0.5", "2"])
+@pytest.mark.parametrize("order", [0, 1, 2, 3])
+def test_parameterized_rho_exact_fraction_oracle(mode, gamma, rho, order, ext_ctx):
+    values = tuple(Fraction(1, n+1)+Fraction((-1)**n, (n+2)**2) for n in range(13))
+    decimal = [mp.mpf(v.numerator)/v.denominator for v in values]
+    algo = get("accelerators", "wynn_rho")({"order": order, "numerator": mode, "gamma": gamma, "rho": rho})
+    state, source = AlgoState(), Terms(decimal, ext_ctx)
+    for n in range(3):
+        state = algo.step(source, state, ext_ctx)
+        expected = parameterized_rho_exact(values, 2*order, n, mode, Fraction(gamma), Fraction(rho))
+        relative_close(ext_ctx, state.estimate, mp.mpf(expected.numerator)/expected.denominator, digits=50)
+
+
+@pytest.mark.parametrize("gamma", ["-0.5", "-1", "-2.5"])
+def test_osada_first_even_column_explicit_formula(gamma, ext_ctx):
+    # Independent closed expression, Chang et al. (2019), Eq. (2.14).
+    alpha = -mp.mpf(gamma)
+    s = [7+mp.power(n+2, -alpha) for n in range(3)]
+    expected = s[1]-(alpha+1)/alpha*(s[1]-s[0])*(s[2]-s[1])/(s[2]-2*s[1]+s[0])
+    algo = get("accelerators", "wynn_rho")({"order": 1, "numerator": "generalized", "gamma": gamma})
+    relative_close(ext_ctx, algo.step(Terms(s, ext_ctx), AlgoState(), ext_ctx).estimate, expected)
+
+
+@pytest.mark.parametrize("params", [
+    {"numerator": "missing"}, {"numerator": "generalized", "grid_power": 2},
+    {"numerator": "gamma_rho", "grid_shift": "2"}])
+def test_rho_rejects_ambiguous_modes(params):
+    with pytest.raises(ValueError):
+        get("accelerators", "wynn_rho")(params)
+
+
+@pytest.mark.parametrize("params", [
+    {"numerator": "generalized", "gamma": "nan"},
+    {"numerator": "generalized", "gamma": "inf"},
+    {"numerator": "gamma_rho", "rho": "0"},
+    {"numerator": "gamma_rho", "rho": "nan"},
+    {"numerator": "gamma_rho", "rho": "inf"}])
+def test_rho_rejects_nonfinite_parameters(params, ext_ctx):
+    with pytest.raises(ValueError):
+        get("accelerators", "wynn_rho")(params).step(Terms([mp.mpf(n) for n in range(8)], ext_ctx), AlgoState(), ext_ctx)
+
+
+def test_cpp_parameterized_rho_values(ext_ctx):
+    executable = os.environ.get("SHANKS_CPP_REGRESSIONS")
+    if not executable:
+        pytest.skip("set SHANKS_CPP_REGRESSIONS")
+    rows = subprocess.check_output([executable, "--rho-variant-values"], text=True).splitlines()
+    assert len(rows) == 144
+    for row in rows:
+        mode, gamma, rho, order, n, value = row.split()
+        values = [mp.mpf(1)/(j+1)+mp.mpf((-1)**j)/(j+2)**2 for j in range(14)]
+        algo = get("accelerators", "wynn_rho")({"order": int(order), "numerator": mode, "gamma": gamma, "rho": rho})
+        state = AlgoState()
+        source = Terms(values, ext_ctx)
+        for _ in range(int(n)+1):
+            state = algo.step(source, state, ext_ctx)
+        relative_close(ext_ctx, state.estimate, mp.mpf(value), digits=7)
+
+
+
+@pytest.mark.parametrize("alpha", ["0.5", "1.5", "2.5"])
+@pytest.mark.parametrize("order", [1, 2])
+def test_osada_accelerates_nonintegral_power_model(alpha, order, ext_ctx):
+    # Chang et al. (2019), Eq. (2.15): error O(n**(-alpha-2*k)).
+    # This tests a consequence of the theorem, independent of table arithmetic.
+    b, d = ext_ctx.backend, ext_ctx.dps
+    alpha = mp.mpf(alpha)
+    ratios = []
+    for start in (8, 32, 128):
+        values = [7+mp.power(j+2, -alpha) for j in range(start+2*order+1)]
+        algo = get("accelerators", "wynn_rho")({"order": order, "numerator": "generalized", "gamma": str(-alpha)})
+        state = AlgoState(iteration=start)
+        result = algo.step(Terms(values, ext_ctx), state, ext_ctx)
+        raw_error = ext_ctx.number(mp.nstr(values[start]-7, 95))
+        error = b.abs_val(b.sub(result.estimate, ext_ctx.number(7), d), d)
+        ratios.append(b.div(error, raw_error, d))
+    for left, right in zip(ratios, ratios[1:]):
+        assert b.sign(b.sub(left, b.mul(ext_ctx.number(4), right, d), d), d) > 0

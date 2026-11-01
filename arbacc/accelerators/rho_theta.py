@@ -15,11 +15,19 @@ class WynnRho(_FixedOrder):
     name = display_name = "wynn_rho"
 
     PARAM_SPEC = {**_FixedOrder.PARAM_SPEC,
+        "numerator": {"type": "str", "default": "classic", "choices": ["classic", "generalized", "gamma_rho"]},
+        "gamma": {"type": "str", "default": "-1"},
+        "rho": {"type": "str", "default": "1"},
         "grid_shift": {"type": "str", "default": "1", "short": "shift"},
         "grid_power": {"type": "int", "min": 1, "default": 1, "short": "power"}}
 
     def __init__(self, params=None):
         super().__init__(params)
+        self.numerator = self.params.get("numerator", "classic")
+        if self.numerator not in ("classic", "generalized", "gamma_rho"):
+            raise ValueError("unknown rho numerator")
+        if self.numerator != "classic" and (self.params.get("grid_shift", "1") != "1" or self.params.get("grid_power", 1) != 1):
+            raise ValueError("parameterized numerators cannot be combined with a custom grid")
         self.grid_power = self.params.get("grid_power", 1)
         if isinstance(self.grid_power, bool) or not isinstance(self.grid_power, int) or self.grid_power < 1:
             raise ValueError("grid_power must be a positive integer")
@@ -29,6 +37,11 @@ class WynnRho(_FixedOrder):
 
     def step(self, source, state, ctx):
         b, d, n = ctx.backend, ctx.dps, state.iteration
+        gamma, rho = ctx.number(self.params.get("gamma", "-1")), ctx.number(self.params.get("rho", "1"))
+        if self.numerator != "classic" and not b.is_finite(gamma, d):
+            raise ValueError("gamma must be finite")
+        if self.numerator == "gamma_rho" and (not b.is_finite(rho, d) or b.sign(rho, d) == 0):
+            raise ValueError("rho must be finite and nonzero")
         shift = ctx.number(self.params.get("grid_shift", "1"))
         if not b.is_finite(shift, d) or b.sign(shift, d) <= 0:
             raise ValueError("grid_shift must be finite and positive")
@@ -52,7 +65,17 @@ class WynnRho(_FixedOrder):
                 if previous[j+1] is not None and current[j] is not None and current[j+1] is not None:
                     difference = b.sub(current[j+1], current[j], d)
                     if b.sign(difference, d) != 0:
-                        value = b.add(previous[j+1], b.div(b.sub(nodes[j+column], nodes[j], d), difference, d), d)
+                        numerator = b.sub(nodes[j+column], nodes[j], d)
+                        if self.numerator == "generalized":
+                            # Osada: column-1+alpha, alpha=-gamma.
+                            # https://arxiv.org/pdf/1903.10198, Eq. (2.14).
+                            numerator = b.sub(ctx.number(column-1), gamma, d)
+                        elif self.numerator == "gamma_rho":
+                            # Legacy C++ algebraic variant, NOT an automatic
+                            # estimator of the decay exponent; no general
+                            # convergence guarantee is claimed for this mode.
+                            numerator = b.add(b.sub(b.div(ctx.number(column), b.mul(ctx.number(2), rho, d), d), gamma, d), ctx.number(column % 2), d)
+                        value = b.add(previous[j+1], b.div(numerator, difference, d), d)
                 following.append(value)
             previous, current = current, following
             if column % 2 == 0 and current[0] is not None:

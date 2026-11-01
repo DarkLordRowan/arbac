@@ -366,6 +366,22 @@ def cmd_analyze(args: argparse.Namespace) -> int:
     print(format_table(df))
     return 0
 
+def cmd_experiment_report(args: argparse.Namespace) -> int:
+    """Export a precision-preserving report from web experiment JSON."""
+    from arbacc.core import Context
+    from arbacc.precision import get_backend
+    from arbacc.analysis.experiment import build_experiment_matrix, export_experiment_report
+    try:
+        ctx = Context(backend=get_backend(args.backend), dps=args.dps)
+        matrix = build_experiment_matrix(load_config(Path(args.experiment)), ctx, epsilon=args.epsilon)
+        export_experiment_report(matrix, Path(args.output), ctx)
+    except (ValueError, KeyError, OSError, TypeError) as error:
+        print(f"[FAIL] {type(error).__name__}: {error}", file=sys.stderr)
+        return 1
+    print(f"Report: {len(matrix['cells'])} measurements -> {args.output}")
+    return 0
+
+
 def main() -> int:
     """Точка входа CLI."""
     parser = argparse.ArgumentParser(
@@ -427,6 +443,14 @@ def main() -> int:
     p_analyze.add_argument("--filter", default=None,
                            help="фильтр вида 'key=value,key2=value2'")
     p_analyze.set_defaults(func=cmd_analyze)
+
+    p_report = sub.add_parser("experiment-report", help="матрица и рейтинг из JSON веб-эксперимента")
+    p_report.add_argument("experiment", help="experiment JSON with seriesList/accelList/seriesAccelList")
+    p_report.add_argument("output", help="destination .json or .csv")
+    p_report.add_argument("--backend", default="mpmath")
+    p_report.add_argument("--dps", type=int, default=80)
+    p_report.add_argument("--epsilon", default="1e-10")
+    p_report.set_defaults(func=cmd_experiment_report)
 
     args = parser.parse_args()
     return args.func(args)

@@ -62,7 +62,7 @@ SHANKS_CPP_CATALOGUE=/tmp/shanks-build/catalogue_probe \
 ```
 
 Проверенный запуск: Python 3.13, mpmath 1.4.1, python-flint 0.9.0;
-3565 тестов прошли. GUI-тесты не запускались. Шесть предупреждений относятся к
+3891 тест прошёл, включая 73 GUI-теста и внешние C++/GSL проверки; пропусков нет. 66 предупреждений относятся к
 существующему использованию fork в многопоточном процессе.
 Если переменная SHANKS_CPP_REGRESSIONS не задана, межъязыковая проверка явно пропускается.
 
@@ -93,8 +93,12 @@ assert report["side"] == "two_sided"
 assert report["monotonicity"] == "strict_decreasing_error"
 ```
 
-Матрицы, рейтинги, экспорт и интерфейс из TypeScript целиком ещё не перенесены.
-Все основные семейства C++ имеют Python-аналоги; дополнительные варианты остаются задачей:
+Дополнительно реализованы матрица веб-эксперимента, profiling, рейтинг с явно
+заданной метрикой и JSON/CSV-экспорт через `arbacc.analysis.experiment` и
+`python -m arbacc.cli experiment-report`. Композитный браузерный рейтинг
+и оформление React не копировались; Python GUI проверен отдельно.
+Все существующие семейства и реализованные числители rho перенесены;
+описания семантики и областей применимости:
 см. `shanks-university/docs/catalogue-coverage.md` и `mathematical-audit.md`.
 
 ## Литература
@@ -124,3 +128,6 @@ assert report["monotonicity"] == "strict_decreasing_error"
 
 
 Следующий этап: [настраиваемая сетка Wynn rho](continuation-09.md).
+
+
+Итог обязательных задач и дополнительные исправления: [этап 10](continuation-10.md).
