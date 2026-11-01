@@ -14,13 +14,13 @@ from tests.test_mathematical_oracles import Terms, mp
 from tests.test_extended_series import ext_ctx, relative_close
 
 
-def rho_interpolation(values,n,k):
+def rho_interpolation(values,n,k,shift="1",power=1):
     if k==0:
         return values[n]
     matrix=[]
     rhs=[]
     for j in range(2*k+1):
-        x=mp.mpf(n+j+1)
+        x=(mp.mpf(n+j)+mp.mpf(shift))**power
         value=values[n+j]
         matrix.append([x**i for i in range(k,-1,-1)] + [-value*x**i for i in range(k-1,-1,-1)])
         rhs.append(value*x**k)
@@ -157,3 +157,39 @@ def test_new_cpp_algorithms(ext_ctx):
             state=algo.step(source,state,ext_ctx)
         relative_close(ext_ctx,state.estimate,mp.mpf(value),digits=8)
     assert len(lines)==42
+
+
+@pytest.mark.parametrize("shift", ["0.5", "1", "3.25"])
+@pytest.mark.parametrize("power", [1, 2, 3])
+@pytest.mark.parametrize("order", [0, 1, 2, 3])
+def test_rho_grid_rational_interpolation(shift, power, order, ext_ctx):
+    values = [mp.log(n+2)+mp.mpf(1)/(n+1) for n in range(14)]
+    algo = get("accelerators", "wynn_rho")({
+        "order": order, "grid_shift": shift, "grid_power": power})
+    source, state = Terms(values, ext_ctx), AlgoState()
+    for n in range(3):
+        state = algo.step(source, state, ext_ctx)
+        relative_close(ext_ctx, state.estimate,
+            rho_interpolation(values, n, order, shift, power), digits=50)
+
+
+@pytest.mark.parametrize("power", [1, 2, 3])
+def test_rho_grid_exact_kernel(power, ext_ctx):
+    values = [7+mp.mpf(3)/(mp.mpf(n)+mp.mpf("0.5"))**power for n in range(5)]
+    algo = get("accelerators", "wynn_rho")({
+        "order": 1, "grid_shift": "0.5", "grid_power": power})
+    result = algo.step(Terms(values, ext_ctx), AlgoState(), ext_ctx)
+    relative_close(ext_ctx, result.estimate, mp.mpf(7))
+
+
+@pytest.mark.parametrize("power", [True, 0, -1, 1.5])
+def test_rho_grid_rejects_invalid_power(power):
+    with pytest.raises(ValueError, match="grid_power"):
+        get("accelerators", "wynn_rho")({"grid_power": power})
+
+
+@pytest.mark.parametrize("shift", ["0", "-1", "nan", "inf"])
+def test_rho_grid_rejects_invalid_shift(shift, ext_ctx):
+    algo = get("accelerators", "wynn_rho")({"grid_shift": shift})
+    with pytest.raises(ValueError, match="grid_shift"):
+        algo.step(Terms([mp.mpf(n) for n in range(8)], ext_ctx), AlgoState(), ext_ctx)

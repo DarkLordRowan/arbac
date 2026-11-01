@@ -121,3 +121,6 @@ assert report["monotonicity"] == "strict_decreasing_error"
 Седьмой этап: [Anderson и Ford–Sidi](continuation-07.md).
 
 Текущий итог: [Chang–Wynn, общая J-схема и адаптивный epsilon](continuation-08.md).
+
+
+Следующий этап: [настраиваемая сетка Wynn rho](continuation-09.md).

@@ -2,7 +2,8 @@
 
 https://arxiv.org/pdf/math/0306302
 order is the number of even transforms: rho_(2*order), theta_(2*order).
-Rho uses x_n=n+1. Series terms are not interpolation nodes.
+Rho defaults to x_n=n+1; optional grid: x_n=(n+grid_shift)**grid_power.
+Series terms are not interpolation nodes.
 Singular cells are unavailable; fall back to a lower transform or raw sum.
 """
 from arbacc.core.registry import register
@@ -13,11 +14,33 @@ from arbacc.accelerators.direct import _FixedOrder, _partials
 class WynnRho(_FixedOrder):
     name = display_name = "wynn_rho"
 
+    PARAM_SPEC = {**_FixedOrder.PARAM_SPEC,
+        "grid_shift": {"type": "str", "default": "1", "short": "shift"},
+        "grid_power": {"type": "int", "min": 1, "default": 1, "short": "power"}}
+
+    def __init__(self, params=None):
+        super().__init__(params)
+        self.grid_power = self.params.get("grid_power", 1)
+        if isinstance(self.grid_power, bool) or not isinstance(self.grid_power, int) or self.grid_power < 1:
+            raise ValueError("grid_power must be a positive integer")
+
     def required_input(self, state):
         return state.iteration + 2*self.order + 1
 
     def step(self, source, state, ctx):
         b, d, n = ctx.backend, ctx.dps, state.iteration
+        shift = ctx.number(self.params.get("grid_shift", "1"))
+        if not b.is_finite(shift, d) or b.sign(shift, d) <= 0:
+            raise ValueError("grid_shift must be finite and positive")
+        # Weniger (1989), Eq. (6.2-2): x_(n+column)-x_n.
+        # Integer powers use backend multiplication, preserving Arb enclosures.
+        nodes = []
+        for index in range(n, n+2*self.order+1):
+            base = b.add(ctx.number(index), shift, d)
+            value = ctx.number(1)
+            for _ in range(self.grid_power):
+                value = b.mul(value, base, d)
+            nodes.append(value)
         sums = _partials(source, state, ctx, self.required_input(state))
         current = sums[n:n+2*self.order+1]
         previous = [ctx.number(0)]*(len(current)+1)
@@ -29,7 +52,7 @@ class WynnRho(_FixedOrder):
                 if previous[j+1] is not None and current[j] is not None and current[j+1] is not None:
                     difference = b.sub(current[j+1], current[j], d)
                     if b.sign(difference, d) != 0:
-                        value = b.add(previous[j+1], b.div(ctx.number(column), difference, d), d)
+                        value = b.add(previous[j+1], b.div(b.sub(nodes[j+column], nodes[j], d), difference, d), d)
                 following.append(value)
             previous, current = current, following
             if column % 2 == 0 and current[0] is not None:
