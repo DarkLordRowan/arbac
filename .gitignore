@@ -218,3 +218,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Research outputs and temporary traces (not part of the source release)
+out/
+results/
+*.parquet
+*.jsonl.gz
+*.prof

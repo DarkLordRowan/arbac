@@ -12,6 +12,9 @@ from arbacc.accelerators.direct import _FixedOrder,_partials,Levin
 
 @register('accelerators','iterated_aitken')
 class IteratedAitken(_FixedOrder):
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Weniger, Nonlinear Sequence Transformations (1989 dissertation; 2003 arXiv version)', 'url': 'https://arxiv.org/abs/math/0306302', 'locator': 'section 5.1', 'relation': 'literature_family', 'implementation_note': 'Repeated Delta^2 transform; not identical to Shanks of the same order.'}
     name=display_name='iterated_aitken'
 
     def required_input(self,state):
@@ -44,6 +47,9 @@ class WynnEpsilonFixed(_FixedOrder):
     this window when the requested order is singular. Never mix an odd
     auxiliary cell (inverse units) into the returned estimate.
     """
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Wynn, On a device for computing the e_m(S_n) transformation, MTAC 10 (1956), 91-96', 'url': 'https://doi.org/10.2307/2002183', 'locator': 'epsilon recursion; see also DLMF 3.9(iv)', 'relation': 'local_variant', 'implementation_note': 'Fixed even-column/window evaluator; not an additional mathematical transformation.'}
     name=display_name='wynn_epsilon_fixed'
 
     def required_input(self,state):
@@ -74,6 +80,9 @@ class WynnEpsilonFixed(_FixedOrder):
 
 @register('accelerators','levin_sidi_m')
 class LevinSidiM(Levin):
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Weniger, Nonlinear Sequence Transformations (1989 dissertation; 2003 arXiv version)', 'url': 'https://arxiv.org/abs/math/0306302', 'locator': 'sections 9.2 and 9.4', 'relation': 'legacy_name', 'implementation_note': 'Historical C++ identifier; factorial Weniger M formula, not an independent Sidi algorithm.'}
     name=display_name='levin_sidi_m'
     PARAM_SPEC={**_FixedOrder.PARAM_SPEC,
         'gamma':{'type':'str','default':'100.5','short':'g'},

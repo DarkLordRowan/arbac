@@ -238,4 +238,5 @@ def test_order_zero_consumes_one_term(name,math_ctx):
 def test_all_accelerators_have_oracles():
     assert set(list_registered("accelerators")["accelerators"]) == {
         "aitken_delta2","wynn_epsilon","shanks","richardson","levin","weniger",
-        "drummond","wynn_rho","brezinski_theta","overholt","lubkin_w","iterated_aitken","wynn_epsilon_fixed","levin_sidi_m","homeier_f","homeier_h","homeier_pj","anderson","ford_sidi","aitken_backtracking","chang_wynn","homeier_j","wynn_epsilon_adaptive"}
+        "drummond","wynn_rho","brezinski_theta","overholt","lubkin_w","iterated_aitken","wynn_epsilon_fixed","levin_sidi_m","levin_sidi_s","homeier_f","homeier_h","homeier_pj","anderson","ford_sidi","aitken_backtracking","chang_wynn","homeier_j","wynn_epsilon_adaptive",'euler_alternating','osada_generalized_rho','sidi_d_m','weniger_m','brezinski_e','cvz_2a','cvz_2b','cvz_chebyshev','sidi_d_m_e_recursive',
+        'ford_sidi_dm_wm', 'ford_sidi_wm', 'levin_power_remainder', 'osada_rho_safe', 'osada_rho_theta_estimated', 'sidi_dm_strided', 'weniger_fractional_factorial' }

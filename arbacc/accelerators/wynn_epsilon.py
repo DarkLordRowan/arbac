@@ -10,6 +10,9 @@ from arbacc.core.stream import partial_value
 
 @register("accelerators", "wynn_epsilon")
 class WynnEpsilon(AcceleratorBase):
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Wynn, On a device for computing the e_m(S_n) transformation, MTAC 10 (1956), 91-96', 'url': 'https://doi.org/10.2307/2002183', 'locator': 'epsilon recursion; see also DLMF 3.9(iv)', 'relation': 'literature_family', 'implementation_note': 'Wynn epsilon recursive table; local singularity fallback policy is separate.'}
     name = "wynn_epsilon"
     display_name = "wynn"
     PARAM_SPEC = {}

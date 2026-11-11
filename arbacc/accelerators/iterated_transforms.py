@@ -11,6 +11,9 @@ from arbacc.accelerators.direct import _FixedOrder,_partials
 
 @register('accelerators','overholt')
 class Overholt(_FixedOrder):
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Sidi, Practical Extrapolation Methods (2003)', 'url': 'https://doi.org/10.1017/CBO9780511546815', 'locator': 'ch. 22 (Overholt transformation)', 'relation': 'literature_family', 'implementation_note': 'Overholt transformation; check window indexing against original.'}
     name=display_name='overholt'
 
     def required_input(self,state):
@@ -39,6 +42,9 @@ class Overholt(_FixedOrder):
 
 @register('accelerators','lubkin_w')
 class LubkinW(_FixedOrder):
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Weniger, Nonlinear Sequence Transformations (1989/2003)', 'url': 'https://arxiv.org/abs/math/0306302', 'locator': 'section 10.3 (Lubkin W / theta_2 context)', 'relation': 'literature_family', 'implementation_note': 'W transform; equivalent theta_2 rational expression in this implementation.'}
     name=display_name='lubkin_w'
 
     def required_input(self,state):

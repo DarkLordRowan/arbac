@@ -14,6 +14,9 @@ from arbacc.accelerators.direct import Levin,_partials
 
 @register('accelerators','anderson')
 class Anderson(AcceleratorBase):
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Walker & Ni, Anderson Acceleration for Fixed-Point Iterations, SIAM J. Numer. Anal. 49 (2011)', 'url': 'https://doi.org/10.1137/10078356X', 'locator': 'fixed-point acceleration background; scalar observed-pair variant here', 'relation': 'local_variant', 'implementation_note': 'Scalar observed-pair extrapolation, not a full fixed-point function Anderson solver.'}
     name=display_name='anderson'
     PARAM_SPEC={'memory':{'type':'int','default':50,'min':1,'short':'m'},
         'beta':{'type':'str','default':'1','short':'b'},
@@ -55,6 +58,9 @@ class Anderson(AcceleratorBase):
 @register('accelerators','ford_sidi')
 class FordSidi(Levin):
     """Ford-Sidi elimination for a Levin error basis (same model, new algorithm)."""
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Ford & Sidi, An algorithm for a generalization of the Richardson extrapolation process, SIAM J. Numer. Anal. 24 (1987), 1212-1232', 'url': 'https://doi.org/10.1137/0724080', 'locator': 'W^(m) recursion and generalized Richardson-type elimination', 'relation': 'local_variant', 'implementation_note': 'Generalized elimination using a Levin error basis; verify exact column-basis mapping per example.'}
     name=display_name='ford_sidi'
 
     def step(self,source,state,ctx):
@@ -90,6 +96,9 @@ class FordSidi(Levin):
 @register('accelerators','aitken_backtracking')
 class AitkenBacktracking(AcceleratorBase):
     """Legacy Ford-Sidi-2 helper: search backward for a usable Aitken triple."""
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Sidi, Practical Extrapolation Methods, Cambridge University Press (2003)', 'url': 'https://doi.org/10.1017/CBO9780511546815', 'locator': 'ch. 15 (Delta-squared processes)', 'relation': 'local_variant', 'implementation_note': 'Local backtracking to locate a nonsingular triple; not a named historical algorithm.'}
     name=display_name='aitken_backtracking'
     PARAM_SPEC={}
 

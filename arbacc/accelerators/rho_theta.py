@@ -12,6 +12,9 @@ from arbacc.accelerators.direct import _FixedOrder, _partials
 
 @register("accelerators", "wynn_rho")
 class WynnRho(_FixedOrder):
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Weniger, Nonlinear Sequence Transformations (1989/2003)', 'url': 'https://arxiv.org/abs/math/0306302', 'locator': 'section 6.2 (Wynn rho recurrence)', 'relation': 'literature_family', 'implementation_note': 'Wynn rho recursion with configurable interpolation node grid.'}
     name = display_name = "wynn_rho"
 
     PARAM_SPEC = {**_FixedOrder.PARAM_SPEC,
@@ -87,6 +90,9 @@ class WynnRho(_FixedOrder):
 
 @register("accelerators", "brezinski_theta")
 class BrezinskiTheta(_FixedOrder):
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Sidi, Practical Extrapolation Methods (2003)', 'url': 'https://doi.org/10.1017/CBO9780511546815', 'locator': 'ch. 20.2', 'relation': 'literature_family', 'implementation_note': 'Theta recurrence; current lower-order fallback is implementation policy.'}
     name = display_name = "brezinski_theta"
 
     def required_input(self, state):

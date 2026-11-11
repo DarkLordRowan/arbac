@@ -1,0 +1,48 @@
+{
+  "run_id": "research_smoke_profile",
+  "precision": {
+    "backend": "mpmath",
+    "dps": 50
+  },
+  "series": [
+    {
+      "id": "zeta3",
+      "type": "zeta",
+      "params": {
+        "s": 3
+      }
+    }
+  ],
+  "noise": [
+    {
+      "id": "clean",
+      "type": "none",
+      "params": {},
+      "seed": 0
+    }
+  ],
+  "accelerators": [
+    {
+      "id": "aitken",
+      "type": "aitken_delta2",
+      "params": {},
+      "n_max": 40,
+      "stopping": [
+        {
+          "type": "max_iter",
+          "params": {
+            "n": 10
+          }
+        }
+      ]
+    }
+  ],
+  "research": {
+    "epsilon": "1e-8",
+    "baseline_budget": 40,
+    "class_by_series_id": {
+      "zeta_s3": "power"
+    },
+    "profile_backend_ops": true
+  }
+}

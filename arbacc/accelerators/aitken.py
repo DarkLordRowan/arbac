@@ -26,6 +26,9 @@ from arbacc.core.stream import Stream, extend_partials
 class AitkenDelta2(AcceleratorBase):
     """Δ²-процесс Эйткена."""
 
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Sidi, Practical Extrapolation Methods, Cambridge University Press (2003)', 'url': 'https://doi.org/10.1017/CBO9780511546815', 'locator': 'ch. 15 (Delta-squared processes)', 'relation': 'literature_family', 'implementation_note': 'Aitken Delta^2 expression; exact triple window.'}
+
     name = "aitken_delta2"
     display_name = "aitd2"
 

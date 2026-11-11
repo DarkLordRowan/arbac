@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "reference_policy": "A citation describes the published family or model; it does not independently certify formula-level identity.",
+  "algorithms": {
+    "aitken_backtracking": {
+      "citation": "Sidi, Practical Extrapolation Methods, Cambridge University Press (2003)",
+      "url": "https://doi.org/10.1017/CBO9780511546815",
+      "locator": "ch. 15 (Delta-squared processes)",
+      "relation": "local_variant",
+      "implementation_note": "Local backtracking to locate a nonsingular triple; not a named historical algorithm."
+    },
+    "aitken_delta2": {
+      "citation": "Sidi, Practical Extrapolation Methods, Cambridge University Press (2003)",
+      "url": "https://doi.org/10.1017/CBO9780511546815",
+      "locator": "ch. 15 (Delta-squared processes)",
+      "relation": "literature_family",
+      "implementation_note": "Aitken Delta^2 expression; exact triple window."
+    },
+    "anderson": {
+      "citation": "Walker & Ni, Anderson Acceleration for Fixed-Point Iterations, SIAM J. Numer. Anal. 49 (2011)",
+      "url": "https://doi.org/10.1137/10078356X",
+      "locator": "fixed-point acceleration background; scalar observed-pair variant here",
+      "relation": "local_variant",
+      "implementation_note": "Scalar observed-pair extrapolation, not a full fixed-point function Anderson solver."
+    },
+    "brezinski_e": {
+      "citation": "Fdil, Some results on convergence acceleration for the E-algorithm, Applicationes Mathematicae 24(4) (1997)",
+      "url": "https://matwbn.icm.edu.pl/ksiazki/zm/zm24/zm2443.pdf",
+      "locator": "section 1 recurrence",
+      "relation": "model_assisted",
+      "implementation_note": "Requires explicit auxiliary/error basis; compare separately from black-box methods."
+    },
+    "brezinski_theta": {
+      "citation": "Sidi, Practical Extrapolation Methods (2003)",
+      "url": "https://doi.org/10.1017/CBO9780511546815",
+      "locator": "ch. 20.2",
+      "relation": "literature_family",
+      "implementation_note": "Theta recurrence; current lower-order fallback is implementation policy."
+    },
+    "chang_wynn": {
+      "citation": "Chang, He, Hu, Sun & Weniger, Construction of New Generalizations of Wynn's Epsilon and Rho Algorithm (2019)",
+      "url": "https://arxiv.org/abs/1903.10198",
+      "locator": "Eq. (3.20)",
+      "relation": "literature_family",
+      "implementation_note": "Chang et al. generalization; different input budget from ordinary Wynn epsilon."
+    },
+    "cvz_2a": {
+      "citation": "Cohen, Rodriguez Villegas & Zagier, Convergence Acceleration of Alternating Series, Experimental Mathematics 9 (2000), 3-12",
+      "url": "https://doi.org/10.1080/10586458.2000.10504632",
+      "locator": "Algorithm 2A",
+      "relation": "literature_family",
+      "implementation_note": "CVZ alternating-series transformation."
+    },
+    "cvz_2b": {
+      "citation": "Cohen, Rodriguez Villegas & Zagier, Convergence Acceleration of Alternating Series, Experimental Mathematics 9 (2000), 3-12",
+      "url": "https://doi.org/10.1080/10586458.2000.10504632",
+      "locator": "Algorithm 2B",
+      "relation": "literature_family",
+      "implementation_note": "CVZ alternating-series transformation."
+    },
+    "cvz_chebyshev": {
+      "citation": "Cohen, Rodriguez Villegas & Zagier, Convergence Acceleration of Alternating Series, Experimental Mathematics 9 (2000), 3-12",
+      "url": "https://doi.org/10.1080/10586458.2000.10504632",
+      "locator": "Algorithm 1",
+      "relation": "literature_family",
+      "implementation_note": "CVZ accelerated alternating-series transformation."
+    },
+    "drummond": {
+      "citation": "Weniger, Nonlinear Sequence Transformations (1989/2003)",
+      "url": "https://arxiv.org/abs/math/0306302",
+      "locator": "section 9.5 (Drummond transformation)",
+      "relation": "literature_family",
+      "implementation_note": "Difference-quotient scheme with configurable remainder choice."
+    },
+    "euler_alternating": {
+      "citation": "Sidi, Practical Extrapolation Methods (2003)",
+      "url": "https://doi.org/10.1017/CBO9780511546815",
+      "locator": "section 15.2 (Euler alternating-series transformation)",
+      "relation": "literature_family",
+      "implementation_note": "Alternating-series Euler transformation; restricted regularity assumptions."
+    },
+    "ford_sidi": {
+      "citation": "Ford & Sidi, An algorithm for a generalization of the Richardson extrapolation process, SIAM J. Numer. Anal. 24 (1987), 1212-1232",
+      "url": "https://doi.org/10.1137/0724080",
+      "locator": "W^(m) recursion and generalized Richardson-type elimination",
+      "relation": "local_variant",
+      "implementation_note": "Generalized elimination using a Levin error basis; verify exact column-basis mapping per example."
+    },
+    "ford_sidi_dm_wm": {
+      "citation": "Ford & Sidi, An algorithm for a generalization of the Richardson extrapolation process, SIAM J. Numer. Anal. 24 (1987), 1212-1232",
+      "url": "https://doi.org/10.1137/0724080",
+      "locator": "appendix B",
+      "relation": "literature_family",
+      "implementation_note": "Ford-Sidi d example via W^(m) recursion."
+    },
+    "ford_sidi_wm": {
+      "citation": "Ford & Sidi, An algorithm for a generalization of the Richardson extrapolation process, SIAM J. Numer. Anal. 24 (1987), 1212-1232",
+      "url": "https://doi.org/10.1137/0724080",
+      "locator": "section 4 and appendix B",
+      "relation": "literature_family",
+      "implementation_note": "Ford-Sidi W^(m) recurrence, generalized basis."
+    },
+    "homeier_f": {
+      "citation": "Homeier, Scalar Levin-Type Sequence Transformations (2000)",
+      "url": "https://arxiv.org/abs/math/0005209",
+      "locator": "Eq. (98)",
+      "relation": "literature_family",
+      "implementation_note": "F construction per the cited Homeier formulas."
+    },
+    "homeier_h": {
+      "citation": "Homeier, Scalar Levin-Type Sequence Transformations (2000)",
+      "url": "https://arxiv.org/abs/math/0005209",
+      "locator": "Eq. (107)",
+      "relation": "literature_family",
+      "implementation_note": "H construction per the cited Homeier formulas."
+    },
+    "homeier_j": {
+      "citation": "Homeier, Scalar Levin-Type Sequence Transformations (2000)",
+      "url": "https://arxiv.org/abs/math/0005209",
+      "locator": "Eqs. (33), (94)",
+      "relation": "literature_family",
+      "implementation_note": "Generalized J difference construction."
+    },
+    "homeier_pj": {
+      "citation": "Homeier, Scalar Levin-Type Sequence Transformations (2000)",
+      "url": "https://arxiv.org/abs/math/0005209",
+      "locator": "Eqs. (148), (155)",
+      "relation": "literature_family",
+      "implementation_note": "pJ variant; special p=2 numerical pathway."
+    },
+    "iterated_aitken": {
+      "citation": "Weniger, Nonlinear Sequence Transformations (1989 dissertation; 2003 arXiv version)",
+      "url": "https://arxiv.org/abs/math/0306302",
+      "locator": "section 5.1",
+      "relation": "literature_family",
+      "implementation_note": "Repeated Delta^2 transform; not identical to Shanks of the same order."
+    },
+    "levin": {
+      "citation": "Levin, Development of non-linear transformations for improving convergence of sequences, Int. J. Comput. Math. 3 (1973)",
+      "url": "https://doi.org/10.1080/00207167308803075",
+      "locator": "Levin family; remainder estimates",
+      "relation": "literature_family",
+      "implementation_note": "Current implementation has configurable remainder estimates and beta."
+    },
+    "levin_power_remainder": {
+      "citation": "Levin, Development of non-linear transformations for improving convergence of sequences, Int. J. Comput. Math. 3 (1973)",
+      "url": "https://doi.org/10.1080/00207167308803075",
+      "locator": "Levin family; remainder estimates",
+      "relation": "local_extension",
+      "implementation_note": "Independent power-model collocation with variable exponent; do not attribute generalized formula to Levin."
+    },
+    "levin_sidi_m": {
+      "citation": "Weniger, Nonlinear Sequence Transformations (1989 dissertation; 2003 arXiv version)",
+      "url": "https://arxiv.org/abs/math/0306302",
+      "locator": "sections 9.2 and 9.4",
+      "relation": "legacy_name",
+      "implementation_note": "Historical C++ identifier; factorial Weniger M formula, not an independent Sidi algorithm."
+    },
+    "levin_sidi_s": {
+      "citation": "Sidi, Practical Extrapolation Methods (2003)",
+      "url": "https://doi.org/10.1017/CBO9780511546815",
+      "locator": "sections 6.3.3 and 19.3 (Sidi S; naming comparison still unresolved)",
+      "relation": "attribution_pending",
+      "implementation_note": "EXPLICIT WARNING: implementation is factorial Weniger S-type quotient; same formula as weniger at equal parameters. Verify exact Sidi ch.19 formula before claiming this identifier identifies Sidi S; see also https://arxiv.org/abs/math/0306302."
+    },
+    "lubkin_w": {
+      "citation": "Weniger, Nonlinear Sequence Transformations (1989/2003)",
+      "url": "https://arxiv.org/abs/math/0306302",
+      "locator": "section 10.3 (Lubkin W / theta_2 context)",
+      "relation": "literature_family",
+      "implementation_note": "W transform; equivalent theta_2 rational expression in this implementation."
+    },
+    "osada_generalized_rho": {
+      "citation": "Osada, A convergence acceleration method for some logarithmically convergent sequences, SIAM J. Numer. Anal. 27 (1990), 178-189",
+      "url": "https://doi.org/10.1137/0727012",
+      "locator": "Eq. (3.1)",
+      "relation": "literature_family",
+      "implementation_note": "Generalized rho, including parameter specialization to classical rho."
+    },
+    "osada_rho_safe": {
+      "citation": "Osada, A convergence acceleration method for some logarithmically convergent sequences, SIAM J. Numer. Anal. 27 (1990), 178-189",
+      "url": "https://doi.org/10.1137/0727012",
+      "locator": "Eq. (3.1)",
+      "relation": "local_variant",
+      "implementation_note": "Published generalized rho recurrence plus local last-valid-row recovery."
+    },
+    "osada_rho_theta_estimated": {
+      "citation": "Osada, A convergence acceleration method for some logarithmically convergent sequences, SIAM J. Numer. Anal. 27 (1990), 178-189",
+      "url": "https://doi.org/10.1137/0727012",
+      "locator": "Eq. (5.1) + Eq. (3.1)",
+      "relation": "local_variant",
+      "implementation_note": "Two-stage exponent estimate is NOT literal published automatic algorithm (6.1)."
+    },
+    "overholt": {
+      "citation": "Sidi, Practical Extrapolation Methods (2003)",
+      "url": "https://doi.org/10.1017/CBO9780511546815",
+      "locator": "ch. 22 (Overholt transformation)",
+      "relation": "literature_family",
+      "implementation_note": "Overholt transformation; check window indexing against original."
+    },
+    "richardson": {
+      "citation": "Sidi, Practical Extrapolation Methods (2003)",
+      "url": "https://doi.org/10.1017/CBO9780511546815",
+      "locator": "ch. 1 (Richardson extrapolation)",
+      "relation": "local_variant",
+      "implementation_note": "Specialized Romberg-style error grid with ratio 1/4; not generic Richardson."
+    },
+    "shanks": {
+      "citation": "Weniger, Nonlinear Sequence Transformations (1989 dissertation; 2003 arXiv version)",
+      "url": "https://arxiv.org/abs/math/0306302",
+      "locator": "section 5 (Shanks / epsilon)",
+      "relation": "literature_family",
+      "implementation_note": "Hankel determinant Shanks transformation; independently see DLMF 3.9(iv)."
+    },
+    "sidi_d_m": {
+      "citation": "Sidi, Practical Extrapolation Methods: Theory and Applications (2003)",
+      "url": "https://doi.org/10.1017/CBO9780511546815",
+      "locator": "section 6.2",
+      "relation": "literature_family",
+      "implementation_note": "Direct d^(m) defining linear system, not optimized W^(m)."
+    },
+    "sidi_d_m_e_recursive": {
+      "citation": "Sidi, Practical Extrapolation Methods: Theory and Applications (2003)",
+      "url": "https://doi.org/10.1017/CBO9780511546815",
+      "locator": "section 6.2",
+      "relation": "implementation_variant",
+      "implementation_note": "Alternative E-recursive elimination for the same d^(m) system; not a new method."
+    },
+    "sidi_dm_strided": {
+      "citation": "Sidi, Practical Extrapolation Methods: Theory and Applications (2003)",
+      "url": "https://doi.org/10.1017/CBO9780511546815",
+      "locator": "section 6.2",
+      "relation": "local_variant",
+      "implementation_note": "Nonuniform R_l sampling extension of the defining d^(m) system."
+    },
+    "weniger": {
+      "citation": "Weniger, Nonlinear Sequence Transformations (1989 dissertation; 2003 arXiv version)",
+      "url": "https://arxiv.org/abs/math/0306302",
+      "locator": "section 8.2",
+      "relation": "literature_family",
+      "implementation_note": "Factorial Levin-type transform; distinct parameter/remainder choices do not imply distinct methods."
+    },
+    "weniger_fractional_factorial": {
+      "citation": "Weniger, Nonlinear Sequence Transformations (1989 dissertation; 2003 arXiv version)",
+      "url": "https://arxiv.org/abs/math/0306302",
+      "locator": "inverse-power and inverse-factorial Levin-type constructions",
+      "relation": "local_extension",
+      "implementation_note": "Fractional step in inverse-factorial basis is local generalization, not published Weniger formula."
+    },
+    "weniger_m": {
+      "citation": "Weniger, Nonlinear Sequence Transformations (1989 dissertation; 2003 arXiv version)",
+      "url": "https://arxiv.org/abs/math/0306302",
+      "locator": "sections 9.2 and 9.4",
+      "relation": "alias",
+      "implementation_note": "Published-name alias for legacy levin_sidi_m; not an independent algorithm."
+    },
+    "wynn_epsilon": {
+      "citation": "Wynn, On a device for computing the e_m(S_n) transformation, MTAC 10 (1956), 91-96",
+      "url": "https://doi.org/10.2307/2002183",
+      "locator": "epsilon recursion; see also DLMF 3.9(iv)",
+      "relation": "literature_family",
+      "implementation_note": "Wynn epsilon recursive table; local singularity fallback policy is separate."
+    },
+    "wynn_epsilon_adaptive": {
+      "citation": "Wynn, On a device for computing the e_m(S_n) transformation, MTAC 10 (1956), 91-96",
+      "url": "https://doi.org/10.2307/2002183",
+      "locator": "epsilon recursion; see also DLMF 3.9(iv)",
+      "relation": "local_variant",
+      "implementation_note": "Adaptive selection of available even columns is local stability policy."
+    },
+    "wynn_epsilon_fixed": {
+      "citation": "Wynn, On a device for computing the e_m(S_n) transformation, MTAC 10 (1956), 91-96",
+      "url": "https://doi.org/10.2307/2002183",
+      "locator": "epsilon recursion; see also DLMF 3.9(iv)",
+      "relation": "local_variant",
+      "implementation_note": "Fixed even-column/window evaluator; not an additional mathematical transformation."
+    },
+    "wynn_rho": {
+      "citation": "Weniger, Nonlinear Sequence Transformations (1989/2003)",
+      "url": "https://arxiv.org/abs/math/0306302",
+      "locator": "section 6.2 (Wynn rho recurrence)",
+      "relation": "literature_family",
+      "implementation_note": "Wynn rho recursion with configurable interpolation node grid."
+    }
+  }
+}

@@ -45,6 +45,9 @@ class _Homeier(Levin):
 
 @register('accelerators','homeier_f')
 class HomeierF(_Homeier):
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Homeier, Scalar Levin-Type Sequence Transformations (2000)', 'url': 'https://arxiv.org/abs/math/0005209', 'locator': 'Eq. (98)', 'relation': 'literature_family', 'implementation_note': 'F construction per the cited Homeier formulas.'}
     name=display_name='homeier_f'
     PARAM_SPEC={**Levin.PARAM_SPEC,
         'grid_shift':{'type':'str','default':'4','short':'shift'},
@@ -88,6 +91,9 @@ class HomeierF(_Homeier):
 
 @register('accelerators','homeier_h')
 class HomeierH(_Homeier):
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Homeier, Scalar Levin-Type Sequence Transformations (2000)', 'url': 'https://arxiv.org/abs/math/0005209', 'locator': 'Eq. (107)', 'relation': 'literature_family', 'implementation_note': 'H construction per the cited Homeier formulas.'}
     name=display_name='homeier_h'
     PARAM_SPEC={**Levin.PARAM_SPEC,'alpha':{'type':'str','default':'pi/4','short':'a'}}
 
@@ -128,6 +134,9 @@ class HomeierH(_Homeier):
 
 @register('accelerators','homeier_pj')
 class HomeierPJ(_Homeier):
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Homeier, Scalar Levin-Type Sequence Transformations (2000)', 'url': 'https://arxiv.org/abs/math/0005209', 'locator': 'Eqs. (148), (155)', 'relation': 'literature_family', 'implementation_note': 'pJ variant; special p=2 numerical pathway.'}
     name=display_name='homeier_pj'
     PARAM_SPEC={**Levin.PARAM_SPEC,'p':{'type':'int','default':2,'min':1,'short':'p'}}
 

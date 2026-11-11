@@ -51,31 +51,34 @@ class _FixedOrder(AcceleratorBase):
 
 @register("accelerators", "shanks")
 class Shanks(_FixedOrder):
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Weniger, Nonlinear Sequence Transformations (1989 dissertation; 2003 arXiv version)', 'url': 'https://arxiv.org/abs/math/0306302', 'locator': 'section 5 (Shanks / epsilon)', 'relation': 'literature_family', 'implementation_note': 'Hankel determinant Shanks transformation; independently see DLMF 3.9(iv).'}
     name = display_name = "shanks"
 
     def required_input(self, state):
         return state.iteration + 2 * self.order + 1
 
     def step(self, source, state, ctx):
-        b, d, n, k = ctx.backend, ctx.dps, state.iteration, self.order
+        # Scientific gate: preserve determinant formula, guard numerical rank.
+        from arbacc.accelerators._shanks_rank_guard import shanks_guarded
+        n, k = state.iteration, self.order
         s = _partials(source, state, ctx, self.required_input(state))
-        # Same determinant representation as the C++ implementation:
-        # rows s_(n+j+r)-s_(n+j), equivalent to successive differences.
-        common = [[b.sub(s[n+j+r], s[n+j], d) for j in range(k+1)] for r in range(1, k+1)]
-        denominator = _det([[ctx.number(1)] * (k+1)] + common, ctx)
-        estimate = s[n+2*k]
-        if denominator is not None and b.sign(denominator, d) != 0:
-            numerator = _det([s[n:n+k+1]] + common, ctx)
-            if numerator is not None:
-                estimate = b.div(numerator, denominator, d)
+        estimate, achieved, status, reason = shanks_guarded(s, n, k, ctx, _det)
         result = state.with_estimate(estimate)
-        result.extra["partials"] = s
+        result.extra.update(partials=s, math_status=status,
+                            requested_order=k, achieved_order=achieved)
+        if reason:
+            result.extra['math_warning'] = reason
         return result
 
 
 @register("accelerators", "richardson")
 class Richardson(AcceleratorBase):
     """Romberg-style extrapolation on a dyadic grid (error ratio 1/4)."""
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Sidi, Practical Extrapolation Methods (2003)', 'url': 'https://doi.org/10.1017/CBO9780511546815', 'locator': 'ch. 1 (Richardson extrapolation)', 'relation': 'local_variant', 'implementation_note': 'Specialized Romberg-style error grid with ratio 1/4; not generic Richardson.'}
     name = display_name = "richardson"
     PARAM_SPEC = {}
 
@@ -103,6 +106,9 @@ class Levin(_FixedOrder):
     https://arxiv.org/pdf/math/0306302
     Default next-term remainder and beta=1 retain the original DLMF form.
     """
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Levin, Development of non-linear transformations for improving convergence of sequences, Int. J. Comput. Math. 3 (1973)', 'url': 'https://doi.org/10.1080/00207167308803075', 'locator': 'Levin family; remainder estimates', 'relation': 'literature_family', 'implementation_note': 'Current implementation has configurable remainder estimates and beta.'}
     name = display_name = "levin"
     PARAM_SPEC = {
         **_FixedOrder.PARAM_SPEC,
@@ -151,12 +157,15 @@ class Levin(_FixedOrder):
         s = _partials(source, state, ctx, n+k+1)
         numerator, denominator = ctx.number(0), ctx.number(0)
         estimate = s[n+k]
+        math_status = "fallback_uncomputed"
         if k == 0:
             estimate = s[n]
+            math_status = "identity_order_zero"
         else:
             for j in range(k+1):
                 inverse = self.inverse_remainder(source, n+j, ctx)
                 if inverse is None:
+                    math_status = "fallback_invalid_remainder"
                     break
                 coefficient = b.mul(ctx.number((-1)**j * comb(k,j)), self.weight(n+j, ctx), d)
                 weight = b.mul(coefficient, inverse, d)
@@ -165,8 +174,12 @@ class Levin(_FixedOrder):
             else:
                 if b.sign(denominator, d) != 0:
                     estimate = b.div(numerator, denominator, d)
+                    math_status = "full_order"
+                else:
+                    math_status = "fallback_zero_denominator"
         result = state.with_estimate(estimate)
         result.extra["partials"] = s
+        result.extra["math_status"] = math_status
         return result
 
 
@@ -176,6 +189,9 @@ class Weniger(Levin):
 
     https://arxiv.org/pdf/math/0306302, Section 8.2.
     """
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Weniger, Nonlinear Sequence Transformations (1989 dissertation; 2003 arXiv version)', 'url': 'https://arxiv.org/abs/math/0306302', 'locator': 'section 8.2', 'relation': 'literature_family', 'implementation_note': 'Factorial Levin-type transform; distinct parameter/remainder choices do not imply distinct methods.'}
     name = display_name = "weniger"
 
     def weight(self, index, ctx):
@@ -193,6 +209,9 @@ class Drummond(Levin):
     https://arxiv.org/pdf/math/0306302, Eqs. (9.5-3)-(9.5-4).
     The default remainder is a_(n+1); select t for Drummond's a_n variant.
     """
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Weniger, Nonlinear Sequence Transformations (1989/2003)', 'url': 'https://arxiv.org/abs/math/0306302', 'locator': 'section 9.5 (Drummond transformation)', 'relation': 'literature_family', 'implementation_note': 'Difference-quotient scheme with configurable remainder choice.'}
     name = display_name = "drummond"
 
     def weight(self, index, ctx):

@@ -87,6 +87,9 @@ def test_rounding_nearest_omitted(section):
 
 def test_backend_array_shows_union_rounding(section, qapp):
     """backend='mpmath, arb' → в items все 6 режимов."""
+    from arbacc.precision import list_backends
+    if 'arb' not in list_backends():
+        pytest.skip('Arb backend not installed; union rounding untestable')
     section._backend.setCurrentText("mpmath, arb")
     qapp.processEvents()
     items = [
@@ -145,6 +148,9 @@ def test_rounding_nearest_omitted(section):
 
 def test_backend_array_shows_union_rounding(section, qapp):
     """backend='mpmath, arb' → в items все 6 режимов."""
+    from arbacc.precision import list_backends
+    if 'arb' not in list_backends():
+        pytest.skip('Arb backend not installed; union rounding untestable')
     section._backend.setCurrentText("mpmath, arb")
     qapp.processEvents()
     items = [

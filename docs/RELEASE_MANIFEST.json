@@ -1,0 +1,25 @@
+{
+  "release_id": "Arbac-Magister-Research-2026-11-11",
+  "source": "ARBAC_LOCAL_SOURCE_FOR_REVIEW.zip and ARBAC_RESEARCH_PARQUET_GUI_V3.zip",
+  "expected_remote": "DarkLordRowan/arbac:Magister",
+  "expected_remote_head": "d2ab4993440b3e2b1ba53a060c91a121c2a0bf19",
+  "upload_status": "NOT_PUSHED",
+  "verified_local": {
+    "math_reference_test_count": 283,
+    "python_compileall": "PASS",
+    "windows_core_from_user": {
+      "passed": 4013,
+      "skipped": 61
+    },
+    "windows_research_from_user": {
+      "passed": 35
+    }
+  },
+  "notes": [
+    "Formula unchanged compared to uploaded local code",
+    "Sidi-S tested against mpmath independent recurrence for 135 cases",
+    "Source archive excludes large experiment results",
+    "Contains no automated publishing script: user will commit and push manually"
+  ],
+  "package_type": "full_source_snapshot_for_manual_commit"
+}

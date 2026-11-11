@@ -10,6 +10,9 @@ class ChangWynn(_FixedOrder):
     https://arxiv.org/pdf/1903.10198. k>=1 needs 2k+2 values; this is not
     the input contract of ordinary epsilon. Unavailable cells propagate.
     """
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': "Chang, He, Hu, Sun & Weniger, Construction of New Generalizations of Wynn's Epsilon and Rho Algorithm (2019)", 'url': 'https://arxiv.org/abs/1903.10198', 'locator': 'Eq. (3.20)', 'relation': 'literature_family', 'implementation_note': 'Chang et al. generalization; different input budget from ordinary Wynn epsilon.'}
     name=display_name='chang_wynn'
 
     def required_input(self,state):return state.iteration+(2*self.order+2 if self.order else 1)
@@ -58,6 +61,9 @@ class HomeierJ(Levin):
     pochhammer with shift=p-1 gives pJ. Power is another explicit nonzero
     choice of delta, not a claim of convergence for arbitrary input.
     """
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Homeier, Scalar Levin-Type Sequence Transformations (2000)', 'url': 'https://arxiv.org/abs/math/0005209', 'locator': 'Eqs. (33), (94)', 'relation': 'literature_family', 'implementation_note': 'Generalized J difference construction.'}
     name=display_name='homeier_j'
     PARAM_SPEC={**Levin.PARAM_SPEC,
         'max_order':{'type':'int','default':30,'min':1,'short':'max'},
@@ -180,6 +186,9 @@ def condensed_epsilon(values,ctx,threshold,tolerance):
 @register('accelerators','wynn_epsilon_adaptive')
 class WynnEpsilonAdaptive(_FixedOrder):
     """Condensed epsilon diagonals within a moving 2k+1 window."""
+
+    # Bibliographic provenance, not a claim of numerical equivalence.
+    LITERATURE = {'citation': 'Wynn, On a device for computing the e_m(S_n) transformation, MTAC 10 (1956), 91-96', 'url': 'https://doi.org/10.2307/2002183', 'locator': 'epsilon recursion; see also DLMF 3.9(iv)', 'relation': 'local_variant', 'implementation_note': 'Adaptive selection of available even columns is local stability policy.'}
     name=display_name='wynn_epsilon_adaptive'
     PARAM_SPEC={**_FixedOrder.PARAM_SPEC,
         'irregularity_threshold':{'type':'str','default':'1e-4','short':'irreg'},

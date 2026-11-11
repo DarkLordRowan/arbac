@@ -103,6 +103,10 @@ class PrecisionSection(QGroupBox):
         row3.addWidget(self._rounding, stretch=1)
         layout.addLayout(row3)
 
+        # Initialize the list using the currently selected backend.
+        # Without this, mpmath starts with the Arb-only rad option.
+        self._rebuild_rounding_for_backend()
+
     # ------------------------------------------------------------------
     # Backend → пересборка items rounding
     # ------------------------------------------------------------------

@@ -1,0 +1,9 @@
+{
+  "task_id": "case_id",
+  "n_used": "m",
+  "value": "estimate",
+  "exact_sum": "limit",
+  "accel_id": "algorithm_name",
+  "method_id": "algorithm_name",
+  "series_id": "series_name"
+}
